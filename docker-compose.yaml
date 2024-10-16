@@ -1,0 +1,13 @@
+version: '3.8'
+
+services:
+  epub_to_pdf_converter:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "3453:3453"
+    volumes:
+      - .:/app
+    environment:
+      - FLASK_ENV=development
