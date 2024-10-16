@@ -1,9 +1,9 @@
 # Usar uma imagem base oficial do Python
 FROM python:3.10-slim
 
-# Instalar dependências do sistema necessárias para o wkhtmltopdf
+# Instalar dependências do sistema necessárias para WeasyPrint
 RUN apt-get update && \
-    apt-get install -y wkhtmltopdf libfontconfig && \
+    apt-get install -y build-essential libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
@@ -23,4 +23,4 @@ COPY app.py .
 EXPOSE 3453
 
 # Comando para rodar o aplicativo
-CMD ["python", "app.py"]
+CMD ["python", "-u", "app.py"]

@@ -1,4 +1,4 @@
 Flask==2.0.3
 EbookLib==0.17
-pdfkit==1.0.0
+WeasyPrint==54.3
 Werkzeug==2.0.3
