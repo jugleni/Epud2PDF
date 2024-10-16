@@ -45,7 +45,7 @@ Execute o seguinte comando para construir a imagem e iniciar o microserviço:
 docker-compose up --build
 ```
 
-O serviço ficará disponível em http://localhost:5000.
+O serviço ficará disponível em http://localhost:3453.
 
 ## Como Usar
 
@@ -65,7 +65,7 @@ Você pode usar o Postman ou qualquer ferramenta de cliente HTTP para testar a A
 Utilizando o curl:
 
 ```bash
-curl -X POST http://localhost:5000/convert -F "file=@/caminho/para/seu/arquivo.epub" --output converted.pdf
+curl -X POST http://localhost:3453/convert -F "file=@/caminho/para/seu/arquivo.epub" --output converted.pdf
 ```
 
 Utilizando o Postman:
