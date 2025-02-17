@@ -228,3 +228,6 @@ Contributions are welcome! Feel free to open issues and pull requests to improve
 ## License
 
 This project is licensed under the MIT License.
+
+## Author
+Created by Jugleni Krinski

@@ -144,3 +144,6 @@ Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull re
 ## Licença
 
 Este projeto é licenciado sob a MIT License.
+
+##Author
+Created by Jugleni Krinski
