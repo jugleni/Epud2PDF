@@ -1,146 +1,230 @@
 # Epub2PDF Converter
 
-Epub2PDF Converter é um microserviço desenvolvido em Python que permite a conversão de arquivos `.epub` para `.pdf` via API REST. O serviço utiliza Flask para a criação da API e bibliotecas como `EbookLib` e `WeasyPrint` para a manipulação e conversão dos arquivos.
+Epub2PDF Converter is a Python microservice that enables the conversion of `.epub` files to `.pdf` through a REST API. The service uses Flask for API creation and libraries such as `EbookLib` and `WeasyPrint` for file manipulation and conversion.
 
-## Funcionalidades
+## Features
 
-- Conversão de arquivos `.epub` para `.pdf`.
-- Suporte a upload de arquivos via requisição HTTP POST.
-- Retorno do arquivo PDF convertido diretamente na resposta.
-- Preservação de imagens do EPUB original no PDF final.
-- Tratamento de problemas de codificação de caracteres.
+- Convert `.epub` files to `.pdf`
+- File upload support via HTTP POST request
+- Direct PDF file return in the response
+- Preservation of original EPUB images in final PDF
+- Character encoding handling
 
-## Tecnologias Utilizadas
+## Technologies Used
 
 - Python 3.10
 - Flask
 - EbookLib
 - WeasyPrint
 
-## Requisitos
+## Requirements
 
-- Docker e Docker Compose instalados.
+- Docker and Docker Compose installed
 
-## Como Configurar
+## Quick Start
 
-### 1. Clonar o Repositório
+### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/usuario/epub2pdf-converter.git
-cd epub2pdf-converter
+git clone https://github.com/jugleni/Epub2PDF.git
+cd Epub2PDF
 ```
 
-### 2. Construir e Executar o Contêiner
+### 2. Docker Setup and Usage
 
-Execute o seguinte comando para construir a imagem e iniciar o microserviço:
+Build and start the container:
 
 ```bash
 docker-compose up --build
 ```
 
-O serviço ficará disponível em http://localhost:3453.
+The service will be available at http://localhost:3453.
 
-## Como Usar
+## How to Use
 
-Você pode usar o Postman ou qualquer ferramenta de cliente HTTP para testar a API.
+You can use Postman or any HTTP client tool to test the API.
 
-### Endpoint `/convert`
+## Detailed API Documentation
 
-- **Método:** POST
-- **Descrição:** Converte um arquivo .epub enviado para .pdf e retorna o PDF convertido.
+### Basic Endpoint Information
 
-### Parâmetros da Requisição
+- **Endpoint:** `/convert`
+- **Method:** POST
+- **Content-Type:** multipart/form-data
+- **Parameter:** file (EPUB file)
+- **Response:** PDF file
+- **Service URL:** http://localhost:3453
 
-- **file:** O arquivo .epub a ser convertido (enviado como multipart/form-data).
+### Testing Methods
 
-### Exemplo de Uso com Postman
+#### 1. Using Postman
 
-1. Abra o Postman.
-2. Crie uma nova requisição do tipo POST.
-3. Insira a URL: `http://localhost:3453/convert`.
-4. Na aba "Body":
-   - Selecione "form-data".
-   - Adicione uma chave chamada `file`.
-   - Clique no dropdown à direita da chave `file` e selecione "File".
-   - Clique em "Select Files" e escolha o arquivo .epub que deseja converter.
-5. Clique em "Send" para enviar a requisição.
-6. O Postman receberá o arquivo PDF convertido como resposta.
-7. Para salvar o PDF:
-   - Clique no botão "Save Response" (ícone de disquete).
-   - Escolha "Save as file".
-   - Selecione o local onde deseja salvar o arquivo e dê um nome com a extensão .pdf.
+**Basic Setup:**
+1. Create new POST request to `http://localhost:3453/convert`
+2. Go to "Body" tab
+3. Select "form-data"
+4. Add key `file` (Type: File)
+5. Upload your EPUB file
 
-### Exemplo de Uso com cURL
+**Detailed Testing Steps:**
+1. **Request Configuration:**
+   - Method: POST
+   - URL: http://localhost:3453/convert
+   - Headers: None required (auto-set by Postman)
+   
+2. **File Upload:**
+   - In Body tab → form-data
+   - Key: `file`
+   - Click dropdown next to key → Select 'File'
+   - Value: Click 'Select Files' → Choose EPUB file
 
-Você também pode usar o cURL para fazer a requisição:
+3. **Sending and Receiving:**
+   - Click 'Send'
+   - Expected Response Code: 200 OK
+   - Response Type: application/pdf
+
+4. **Saving the PDF:**
+   - Click 'Save Response' button (disk icon)
+   - Select 'Save as File'
+   - Choose location and name (use .pdf extension)
+
+#### 2. Using cURL
 
 ```bash
-curl -X POST http://localhost:3453/convert -F "file=@/caminho/para/seu/arquivo.epub" --output converted.pdf
+curl -X POST \
+  -F "file=@/path/to/your/book.epub" \
+  http://localhost:3453/convert \
+  --output converted.pdf
 ```
 
-Substitua `/caminho/para/seu/arquivo.epub` pelo caminho real do seu arquivo EPUB.
+Expected Output:
+```
+  % Total    % Received % Xferd  Average Speed   Time    Time     Time  Current
+                                 Dload  Upload   Total   Spent    Left  Speed
+100 15.2M  100 14.2M  100 1021k   4.2M   307k  0:00:03  0:00:03 --:--:-- 4.5M
+```
 
-## Como o Serviço Funciona
+#### 3. Using Python
 
-1. O serviço recebe um arquivo .epub via upload HTTP.
-2. O arquivo é temporariamente salvo no servidor.
-3. O conteúdo do EPUB é extraído, incluindo texto e imagens.
-4. O texto é processado para corrigir problemas de codificação.
-5. As imagens são convertidas para base64 e incorporadas no HTML.
-6. O HTML resultante é convertido para PDF usando WeasyPrint.
-7. O PDF é enviado de volta ao cliente como resposta.
-8. Os arquivos temporários são removidos.
+```python
+import requests
 
-## Estrutura do Projeto
+url = 'http://localhost:3453/convert'
+files = {'file': open('book.epub', 'rb')}
+response = requests.post(url, files=files)
+
+with open('output.pdf', 'wb') as f:
+    f.write(response.content)
+```
+
+### Response Scenarios
+
+1. **Successful Conversion:**
+   - Status: 200 OK
+   - Content-Type: application/pdf
+   - Body: Binary PDF data
+
+2. **Error Responses:**
+   ```json
+   // 400 Bad Request
+   {"error": "No file provided"}
+
+   // 415 Unsupported Media Type
+   {"error": "Invalid file format. Please upload an EPUB file"}
+
+   // 500 Internal Server Error
+   {"error": "Conversion failed"}
+   ```
+
+### Conversion Process Details
+
+1. File Upload: EPUB received via HTTP POST
+2. Temporary Storage: File saved temporarily
+3. Content Extraction:
+   - Text content extracted
+   - Images processed
+   - Character encoding fixed
+4. Conversion Steps:
+   - Images converted to base64
+   - HTML template generated
+   - WeasyPrint processes HTML to PDF
+5. Response: PDF returned to client
+6. Cleanup: Temporary files removed
+
+## Docker Operations
+
+### Basic Commands
+
+```bash
+# Start service
+docker-compose up --build
+
+# Stop service
+docker-compose stop
+
+# Remove container
+docker-compose down
+
+# View logs
+docker-compose logs -f
+```
+
+### Container Management
+
+1. **Monitoring:**
+   - View logs: `docker-compose logs -f`
+   - Check container status: `docker ps`
+
+2. **Resource Management:**
+   - Default port: 3453
+   - Memory usage varies with EPUB size
+   - CPU usage spikes during conversion
+
+3. **Troubleshooting:**
+   - Check container status
+   - Verify port availability
+   - Monitor resource usage
+   - Review conversion logs
+
+## Technical Limitations
+
+1. **File Size:**
+   - Maximum recommended: 50MB
+   - Larger files may cause memory issues
+
+2. **Content:**
+   - Complex layouts may not preserve perfectly
+   - Image quality matches source
+   - Some CSS properties might not convert
+
+3. **Performance:**
+   - Processing time varies with file size
+   - Memory usage scales with content complexity
+   - Multiple simultaneous conversions may impact performance
+
+## Project Structure
 
 ```
 /epub2pdf-converter
-│   ├── app.py              # Código principal do microserviço
-│   ├── Dockerfile          # Configuração do contêiner Docker
-│   ├── requirements.txt    # Dependências do Python
-│   ├── docker-compose.yaml # Configuração do Docker Compose
-│   └── README.md           # Este arquivo
+│   ├── app.py              # Main microservice code
+│   ├── Dockerfile          # Docker container configuration
+│   ├── requirements.txt    # Python dependencies
+│   ├── docker-compose.yaml # Docker Compose configuration
+│   └── README.md           # This file
 ```
 
-## Como Remover
+## Troubleshooting
 
-Para parar e remover o contêiner:
+If you encounter issues with the conversion:
 
-```bash
-docker-compose down
-```
+1. Ensure the EPUB file is valid and can be opened in other readers.
+2. Make sure the file is not corrupted.
+3. For specific encoding issues, check the container logs for more details.
 
-Para remover a imagem Docker criada:
+## Contribution
 
-```bash
-docker rmi epub2pdf-converter_epub_to_pdf_converter
-```
+Contributions are welcome! Feel free to open issues and pull requests to improve the project.
 
-Para remover o código-fonte:
+## License
 
-```bash
-cd ..
-rm -rf epub2pdf-converter
-```
-
-## Solução de Problemas
-
-Se você encontrar problemas com a conversão:
-
-1. Verifique se o arquivo EPUB é válido e pode ser aberto em outros leitores.
-2. Certifique-se de que o arquivo não está corrompido.
-3. Para problemas de codificação específicos, verifique os logs do contêiner para mais detalhes.
-
-## Limitações
-
-- EPUBs muito grandes ou com muitas imagens podem causar problemas de memória.
-- A qualidade das imagens no PDF depende da qualidade original no EPUB.
-- Layouts complexos podem não ser perfeitamente preservados na conversão.
-
-## Contribuição
-
-Contribuições são bem-vindas! Sinta-se à vontade para abrir issues e pull requests para melhorar o projeto.
-
-## Licença
-
-Este projeto é licenciado sob a MIT License.
+This project is licensed under the MIT License.
