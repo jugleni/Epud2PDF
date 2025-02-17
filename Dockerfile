@@ -1,26 +1,26 @@
-# Usar uma imagem base oficial do Python
+# Use official Python base image
 FROM python:3.10-slim
 
-# Instalar dependências do sistema necessárias para WeasyPrint
+# Install system dependencies required for WeasyPrint
 RUN apt-get update && \
     apt-get install -y build-essential libcairo2 libpango-1.0-0 libpangocairo-1.0-0 libgdk-pixbuf2.0-0 libffi-dev shared-mime-info && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Criar o diretório de trabalho
+# Create working directory
 WORKDIR /app
 
-# Copiar os arquivos de dependências para o contêiner
+# Copy dependency files to container
 COPY requirements.txt .
 
-# Instalar as dependências do Python
+# Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copiar o código do aplicativo para o contêiner
+# Copy application code to container
 COPY app.py .
 
-# Expor a porta que o Flask usará
+# Expose Flask port
 EXPOSE 3453
 
-# Comando para rodar o aplicativo
+# Command to run the application
 CMD ["python", "-u", "app.py"]
